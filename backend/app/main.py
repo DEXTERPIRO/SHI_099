@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
+from app.api.materials import router as materials_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -18,6 +19,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register endpoints
+app.include_router(materials_router)
+
 
 @app.get("/health", tags=["System"])
 def health_check():
@@ -34,4 +38,5 @@ def root():
         "environment": settings.ENVIRONMENT,
         "health": "/health",
         "docs": "/docs",
+        "materials_api": "/api/materials",
     }
