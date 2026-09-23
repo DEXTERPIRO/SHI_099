@@ -19,13 +19,19 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
 )
 
-# CORS configuration allowing frontend at localhost and any Render domain
-is_wildcard = settings.CORS_ORIGINS == ["*"]
+# CORS configuration for production Vercel frontend and local development
+origins = [
+    "https://shi-099-lwb2.vercel.app",
+    "https://shi-099-lwb2-mddsezpgp-s-hubham.vercel.app",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if is_wildcard else settings.CORS_ORIGINS,
-    allow_origin_regex=None if is_wildcard else r"https://.*\.onrender\.com",
-    allow_credentials=not is_wildcard,
+    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app|https://.*\.onrender\.com",
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

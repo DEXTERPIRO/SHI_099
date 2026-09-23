@@ -11,6 +11,8 @@ class Settings(BaseSettings):
 
     # CORS Configuration
     CORS_ORIGINS: Union[List[str], str] = [
+        "https://shi-099-lwb2.vercel.app",
+        "https://shi-099-lwb2-mddsezpgp-s-hubham.vercel.app",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
     ]
