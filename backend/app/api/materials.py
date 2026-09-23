@@ -40,6 +40,11 @@ def get_materials(
             query = query.filter(func.upper(CPSE.code) == cpse_val.upper())
 
     materials = query.order_by(Material.id.asc()).offset(skip).limit(limit).all()
+    for m in materials:
+        if m.mappings:
+            m.status = m.mappings[0].status.capitalize()
+        else:
+            m.status = "Pending"
     return materials
 
 
@@ -52,7 +57,37 @@ def get_material(id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Material with id {id} not found",
         )
+    if material.mappings:
+        material.status = material.mappings[0].status.capitalize()
+    else:
+        material.status = "Pending"
     return material
+
+
+@router.post("/{id}/approve")
+def approve_material_match(id: int, db: Session = Depends(get_db)):
+    """Approve a material's match status."""
+    material = db.query(Material).filter(Material.id == id).first()
+    if not material:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Material with id {id} not found",
+        )
+    if material.mappings:
+        for mapping in material.mappings:
+            mapping.status = "approved"
+    else:
+        from app.models import MaterialMapping
+        mapping = MaterialMapping(
+            material_id=material.id,
+            cnmc_id=1,
+            confidence_score=95.0,
+            match_method="manual",
+            status="approved",
+        )
+        db.add(mapping)
+    db.commit()
+    return {"status": "approved", "material_id": id}
 
 
 @router.post("", response_model=MaterialResponse, status_code=status.HTTP_201_CREATED)

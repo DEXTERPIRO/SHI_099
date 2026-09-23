@@ -1,13 +1,12 @@
 import React from 'react';
 import {
-  Search,
-  Bell,
   Building2,
   ChevronDown,
   UserCheck,
   RefreshCw,
-  ExternalLink
+  RotateCcw,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface TopBarProps {
   currentTab: string;
@@ -15,6 +14,8 @@ interface TopBarProps {
   onSelectCpse: (cpse: string) => void;
   onRefreshHealth: () => void;
   isCheckingHealth: boolean;
+  onResetDemoData?: () => void;
+  isResettingDemo?: boolean;
 }
 
 const cpseList = [
@@ -22,10 +23,8 @@ const cpseList = [
   { code: 'ONGC', name: 'ONGC (Oil and Natural Gas Corp)' },
   { code: 'BHEL', name: 'BHEL (Bharat Heavy Electricals)' },
   { code: 'NTPC', name: 'NTPC Limited' },
-  { code: 'IOCL', name: 'IOCL (Indian Oil Corporation)' },
   { code: 'SAIL', name: 'SAIL (Steel Authority of India)' },
   { code: 'CIL', name: 'Coal India Limited' },
-  { code: 'GAIL', name: 'GAIL (India) Limited' },
 ];
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -34,6 +33,8 @@ export const TopBar: React.FC<TopBarProps> = ({
   onSelectCpse,
   onRefreshHealth,
   isCheckingHealth,
+  onResetDemoData,
+  isResettingDemo = false,
 }) => {
   return (
     <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shadow-sm flex-shrink-0 z-10">
@@ -51,20 +52,23 @@ export const TopBar: React.FC<TopBarProps> = ({
         </div>
       </div>
 
-      {/* Middle: Search Box */}
-      <div className="flex-1 max-w-md mx-8">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search material description, CPSE code, or UNSPSC..."
-            className="w-full pl-9 pr-4 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-md text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:bg-white transition-all"
-          />
-        </div>
-      </div>
+      {/* Right: Reset Demo Data, CPSE selector, Health ping, Demo Admin User */}
+      <div className="flex items-center gap-3">
+        {/* Reset Demo Data Button */}
+        {onResetDemoData && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onResetDemoData}
+            disabled={isResettingDemo}
+            className="border-amber-300 bg-amber-50/70 hover:bg-amber-100 text-amber-900 text-xs font-semibold"
+            title="Reset dataset, re-run RapidFuzz, regenerate CNMCs, and repopulate review queue"
+          >
+            <RotateCcw className={`h-3.5 w-3.5 mr-1 text-amber-600 ${isResettingDemo ? 'animate-spin' : ''}`} />
+            {isResettingDemo ? 'Resetting Demo...' : 'Reset Demo Data'}
+          </Button>
+        )}
 
-      {/* Right: CPSE selector, Health ping, Notifications, Profile */}
-      <div className="flex items-center gap-4">
         {/* CPSE Selector Dropdown */}
         <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-300 px-2.5 py-1.5 rounded-md">
           <Building2 className="h-3.5 w-3.5 text-slate-600" />
@@ -93,26 +97,15 @@ export const TopBar: React.FC<TopBarProps> = ({
           <RefreshCw className={`h-4 w-4 ${isCheckingHealth ? 'animate-spin text-amber-600' : ''}`} />
         </button>
 
-        {/* Notifications */}
-        <div className="relative">
-          <button
-            title="Notifications"
-            className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors relative"
-          >
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-amber-500"></span>
-          </button>
-        </div>
-
         <div className="h-5 w-px bg-slate-200" />
 
-        {/* User Badge */}
+        {/* Hardcoded Demo Admin User */}
         <div className="flex items-center gap-2.5 pl-1">
           <div className="h-8 w-8 rounded-full bg-slate-900 text-amber-400 flex items-center justify-center font-semibold text-xs border border-slate-700">
             <UserCheck className="h-4 w-4" />
           </div>
           <div className="flex flex-col text-left">
-            <span className="text-xs font-semibold text-slate-800 leading-tight">Master Nodal Officer</span>
+            <span className="text-xs font-semibold text-slate-800 leading-tight">Demo Admin</span>
             <span className="text-[10px] text-slate-500 font-mono">DPE / CPSE-GATEWAY</span>
           </div>
         </div>
