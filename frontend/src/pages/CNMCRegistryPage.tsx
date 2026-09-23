@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 import {
   Card,
   CardHeader,
@@ -62,7 +63,7 @@ export const CNMCRegistryPage: React.FC = () => {
   const fetchClustersAndCodes = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/api/duplicates/clusters');
+      const res = await fetch(`${API_URL}/api/duplicates/clusters`);
       if (res.ok) {
         const data = await res.json();
         setClusters(data);
@@ -82,7 +83,7 @@ export const CNMCRegistryPage: React.FC = () => {
     setGeneratingClusterId(clusterId);
     setNotification(null);
     try {
-      const res = await fetch(`http://localhost:8000/api/cnmc/generate/${clusterId}`, {
+      const res = await fetch(`${API_URL}/api/cnmc/generate/${clusterId}`, {
         method: 'POST',
       });
       if (res.ok) {

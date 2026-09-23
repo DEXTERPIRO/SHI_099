@@ -1,38 +1,28 @@
 /**
  * Application Configuration
  * Resolves the backend API base URL based on environment variables,
- * deployment host, and optional localStorage override for demo convenience.
+ * deployment host, and fallback to local development.
  */
 
-const getApiBaseUrl = (): string => {
-  // 1. Optional localStorage override (enables pointing to any backend directly in the browser)
-  if (typeof window !== 'undefined') {
-    const storedUrl = localStorage.getItem('NUMM_API_URL');
-    if (storedUrl && storedUrl.trim() !== '') {
-      return storedUrl.trim().replace(/\/+$/, '');
-    }
-  }
-
-  // 2. Vite build-time environment variable
+// If VITE_API_URL is missing, fallback to the Render backend in production (e.g. Vercel) or local 127.0.0.1:8000
+const resolveApiUrl = (): string => {
+  // 1. Vite environment variable (set in .env, .env.production, or Vercel Environment Variables)
   const envUrl = import.meta.env.VITE_API_URL;
   if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
-    let clean = envUrl.trim().replace(/\/+$/, '');
-    if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
-      clean = `https://${clean}`;
-    }
-    return clean;
+    return envUrl.trim().replace(/\/+$/, '');
   }
 
-  // 3. Render Static Site automatic detection
-  if (typeof window !== 'undefined' && window.location.hostname.endsWith('.onrender.com')) {
-    return 'https://numm-backend.onrender.com';
+  // 2. Production host fallback (when deployed on Vercel, Render static site, etc.)
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return 'https://shi-099-backend.onrender.com';
   }
 
-  // 4. Local development fallback
-  return 'http://localhost:8000';
+  // 3. Local development fallback
+  return 'http://127.0.0.1:8000';
 };
 
-export const API_BASE_URL = getApiBaseUrl();
+export const API_URL = resolveApiUrl();
+export const API_BASE_URL = API_URL;
 
 export const setApiBaseUrlOverride = (url: string) => {
   if (typeof window !== 'undefined') {

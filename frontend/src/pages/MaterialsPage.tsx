@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '@/config';
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 import {
   Card,
   CardHeader,
@@ -66,7 +66,7 @@ export const MaterialsPage: React.FC = () => {
   const fetchMaterials = async () => {
     setLoading(true);
     try {
-      let url = `${API_BASE_URL}/api/materials?limit=100`;
+      let url = `${API_URL}/api/materials?limit=100`;
       if (search.trim()) {
         url += `&search=${encodeURIComponent(search.trim())}`;
       }
@@ -96,7 +96,7 @@ export const MaterialsPage: React.FC = () => {
     setApprovedSuccess(false);
     setLoadingCandidates(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/matching/candidates/${mat.id}`);
+      const res = await fetch(`${API_URL}/api/matching/candidates/${mat.id}`);
       if (res.ok) {
         const data = await res.json();
         setCandidates(data);
@@ -115,7 +115,7 @@ export const MaterialsPage: React.FC = () => {
     if (!selectedMaterial) return;
     setApproving(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/materials/${selectedMaterial.id}/approve`, {
+      const res = await fetch(`${API_URL}/api/materials/${selectedMaterial.id}/approve`, {
         method: 'POST',
       });
       if (res.ok) {

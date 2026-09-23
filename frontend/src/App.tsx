@@ -5,7 +5,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { MaterialsPage } from './pages/MaterialsPage';
 import { ReviewQueuePage } from './pages/ReviewQueuePage';
 import { CNMCRegistryPage } from './pages/CNMCRegistryPage';
-import { API_BASE_URL } from '@/config';
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 interface HealthResponse {
   status: string;
@@ -21,7 +21,7 @@ export function App() {
   const checkHealth = async () => {
     setIsCheckingHealth(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/health`, {
+      const res = await fetch(`${API_URL}/health`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -40,7 +40,7 @@ export function App() {
 
   const fetchPendingReviewsCount = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/review?status=pending`);
+      const res = await fetch(`${API_URL}/api/review?status=pending`);
       if (res.ok) {
         const data = await res.json();
         setPendingReviewsCount(Array.isArray(data) ? data.length : 0);
@@ -81,7 +81,7 @@ export function App() {
   const handleResetDemoData = async () => {
     setIsResettingDemo(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/demo/reset`, {
+      const res = await fetch(`${API_URL}/api/demo/reset`, {
         method: 'POST',
       });
       if (res.ok) {

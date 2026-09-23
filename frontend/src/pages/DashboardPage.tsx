@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '@/config';
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 import {
   Card,
   CardHeader,
@@ -114,9 +114,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
     setLoading(true);
     try {
       const [sumRes, clusRes, revRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/duplicates/summary`),
-        fetch(`${API_BASE_URL}/api/duplicates/clusters`),
-        fetch(`${API_BASE_URL}/api/review`),
+        fetch(`${API_URL}/api/duplicates/summary`),
+        fetch(`${API_URL}/api/duplicates/clusters`),
+        fetch(`${API_URL}/api/review`),
       ]);
 
       if (sumRes.ok) {
@@ -181,7 +181,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
     setRunningEngine(true);
     setActionMessage(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/matching/run`, {
+      const res = await fetch(`${API_URL}/api/matching/run`, {
         method: 'POST',
       });
       if (res.ok) {

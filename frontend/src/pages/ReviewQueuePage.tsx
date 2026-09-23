@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '@/config';
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 import {
   Card,
   CardHeader,
@@ -49,7 +49,7 @@ export const ReviewQueuePage: React.FC = () => {
   const fetchReviews = async () => {
     setLoading(true);
     try {
-      let url = 'http://localhost:8000/api/review';
+      let url = `${API_URL}/api/review`;
       if (activeFilter !== 'all') {
         url += `?status=${activeFilter}`;
       }
@@ -72,7 +72,7 @@ export const ReviewQueuePage: React.FC = () => {
   const handleApprove = async (id: number) => {
     setActionInProgress(id);
     try {
-      const res = await fetch(`http://localhost:8000/api/review/${id}/approve`, {
+      const res = await fetch(`${API_URL}/api/review/${id}/approve`, {
         method: 'POST',
       });
       if (res.ok) {
@@ -91,7 +91,7 @@ export const ReviewQueuePage: React.FC = () => {
   const handleReject = async (id: number) => {
     setActionInProgress(id);
     try {
-      const res = await fetch(`http://localhost:8000/api/review/${id}/reject`, {
+      const res = await fetch(`${API_URL}/api/review/${id}/reject`, {
         method: 'POST',
       });
       if (res.ok) {
